@@ -1,15 +1,13 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, abort
 from markdown import markdown
 from mongokit import Connection, Document
 from argparse import ArgumentParser
 
 
 class Content(Document):
-
     use_dot_notation = True
     structure = {
         '_id': unicode,
-        'route': unicode,
         'title': unicode,
         'short_description': unicode,
         'content': unicode,
@@ -22,22 +20,26 @@ connection.register([Content])
 collection = connection['test'].content
 
 
-def make_route(route, title, short_description, content, show_in_navigation):
-    @app.route(route)
-    def route_function():
-        return render_template('content.html', title=title, description=short_description, body=markdown(content))
-    return route_function
+@app.route('/<route>')
+def view(route):
+    content = collection.Content.one({'_id': route})
+    if content is None:
+        abort(404)
+    return render_template('content.html',
+                           title=content.title,
+                           description=content.short_description,
+                           body=markdown(content.content))
 
 
-for content in collection.Content.find():
-    exec "{0} = make_route(content.route, content.title, content.short_description, content.content, content.show_in_navigation)".format(content.title)
+@app.route('/')
+def index():
+    return view('/')
 
 
 def load_from_file(route, title, short_description, content_filename, show_in_navigation, **kwargs):
     content = collection.Content()
-    content.route = unicode(route)
+    content._id = unicode(route)
     content.title = unicode(title)
-    content._id = u':'.join((content.title, content.route))
     content.short_description = unicode(short_description)
     content.show_in_navigation = show_in_navigation
 
@@ -64,9 +66,6 @@ def parse_arguments():
     load_argument_parser.add_argument('--show-in-navigation', action='store_true', default=False)
     load_argument_parser.add_argument('--short-description')
     load_argument_parser.set_defaults(function=load_from_file)
-
-    print argument_parser.parse_args()
-    print vars(argument_parser.parse_args())
 
     return argument_parser.parse_args()
 
