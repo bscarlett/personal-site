@@ -6,19 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{{ description }}">
     <meta name="author" content="Bradley Scarlett">
-
-    <!-- Le styles -->
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
     <style>
         body {
             padding-top: 60px;
         }
     </style>
-
 </head>
-
 <body>
-
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
@@ -30,20 +25,18 @@
             <a class="brand" href="#">Bradley Scarlett</a>
             <div class="nav-collapse collapse">
                 <ul class="nav">
-                    <li ><a href="/">Home</a></li>
-                    <li><a href="/about">About</a></li>
-                    <li><a href="/contact">Contact</a></li>
+                 {%  for navigable in navigables %}
+                    <li><a href="/{{ navigable._id }}">{{ navigable.title }}</a></li>
+                 {% endfor %}
                 </ul>
             </div>
         </div>
     </div>
 </div>
-
 <div class="container">
     {% block content %}{% endblock %}
 </div>
 <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-
 </body>
 </html>

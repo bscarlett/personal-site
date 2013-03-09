@@ -20,6 +20,10 @@ connection.register([Content])
 collection = connection['test'].content
 
 
+def get_navigables():
+    return collection.Content.find({'show_in_navigation': True}, {'title': 1})
+
+
 @app.route('/<route>')
 def view(route):
     content = collection.Content.one({'_id': route})
@@ -28,7 +32,8 @@ def view(route):
     return render_template('content.html',
                            title=content.title,
                            description=content.short_description,
-                           body=markdown(content.content))
+                           body=markdown(content.content),
+                           navigables=get_navigables())
 
 
 @app.route('/')
