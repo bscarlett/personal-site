@@ -1,3 +1,4 @@
-{% include '_head.html' %}
-  {{ body|safe }}
-{% include '_foot.html' %}
+{% extends "layout.html" %}
+{% block content %}
+    {{ body|safe }}
+{% endblock %}
