@@ -24,7 +24,7 @@
             </button>
             <a class="brand" href="#">Bradley Scarlett</a>
             <div class="nav-collapse collapse">
-                <ul class="nav">
+                <ul class="nav" id="navigation">
                  {%  for navigable in navigables %}
                     <li><a href="/{{ navigable._id }}">{{ navigable.title }}</a></li>
                  {% endfor %}
@@ -33,7 +33,7 @@
         </div>
     </div>
 </div>
-<div class="container">
+<div class="container" id="content">
     {% block content %}{% endblock %}
 </div>
 <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>

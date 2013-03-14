@@ -1,10 +1,17 @@
-from flask import Flask, render_template, abort
+from flask import Flask, render_template, abort, g
 from markdown import markdown
 from mongokit import Connection, Document
 from argparse import ArgumentParser
 
+app = Flask(__name__)
+DATABASE = 'test'
+DEBUG = True
+
+app.config.from_object(__name__)
+
 
 class Content(Document):
+    __collection__ = 'content'
     use_dot_notation = True
     structure = {
         '_id': unicode,
@@ -14,26 +21,31 @@ class Content(Document):
         'show_in_navigation': bool}
 
 
-app = Flask(__name__)
-connection = Connection()
-connection.register([Content])
-collection = connection['test'].content
+def get_db(db):
+    connection = Connection()
+    connection.register([Content])
+    return connection[db]
 
 
-def get_navigables():
-    return collection.Content.find({'show_in_navigation': True}, {'title': 1})
+def get_navigables(db):
+    return db.Content.find({'show_in_navigation': True}, {'title': 1})
+
+
+@app.before_first_request
+def before_first_request():
+    g.db = get_db(app.config['DATABASE'])
 
 
 @app.route('/<route>')
 def view(route):
-    content = collection.Content.one({'_id': route})
+    content = g.db.Content.one({'_id': route})
     if content is None:
         abort(404)
     return render_template('content.html',
                            title=content.title,
                            description=content.short_description,
                            body=markdown(content.content),
-                           navigables=get_navigables())
+                           navigables=get_navigables(g.db))
 
 
 @app.route('/')
@@ -42,7 +54,7 @@ def index():
 
 
 def load_from_file(route, title, short_description, content_filename, show_in_navigation, **kwargs):
-    content = collection.Content()
+    content = get_db(app.config['DATABASE']).Content()
     content._id = unicode(route)
     content.title = unicode(title)
     content.short_description = unicode(short_description)
@@ -55,8 +67,8 @@ def load_from_file(route, title, short_description, content_filename, show_in_na
 
 
 def serve(**kwargs):
-    app.debug = True
     app.run()
+    g.db = get_db(app.config['DATABASE'])
 
 
 def parse_arguments():
