@@ -6,10 +6,10 @@ from lxml import etree
 
 class testPersonalSite(unittest.TestCase):
     def setUp(self):
-        testdb = 'testdb'
-        PersonalSite.app.config['DATABASE'] = testdb
+        db = 'test'
+        PersonalSite.app.config['DATABASE'] = db
         self.app = PersonalSite.app.test_client()
-        self.db = PersonalSite.get_db(testdb)
+        self.db = PersonalSite.get_db(db)
 
     def testIndexRoute(self):
         content = self.db.Content()
@@ -26,7 +26,7 @@ class testPersonalSite(unittest.TestCase):
         e = etree.HTML(rsp.data)
         assert e.find('./head/title').text == 'Test Title'
         assert e.find(".//div[@id='content']/p").text == 'Test Content'
-        assert e.find(".//ul[@id='navigation']//a[@href='//']").text == 'Test Title'
+        assert e.find(".//ul[@id='navigation']//a[@href='/']").text == 'Test Title'
 
     def tearDown(self):
         self.db.Content.delete()

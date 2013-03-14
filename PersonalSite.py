@@ -4,7 +4,7 @@ from mongokit import Connection, Document
 from argparse import ArgumentParser
 
 app = Flask(__name__)
-DATABASE = 'test'
+DATABASE = 'personal_site'
 DEBUG = True
 
 app.config.from_object(__name__)
