@@ -31,8 +31,8 @@ def get_navigables(db):
     return db.Content.find({'show_in_navigation': True}, {'title': 1})
 
 
-@app.before_first_request
-def before_first_request():
+@app.before_request
+def before_request():
     g.db = get_db(app.config['DATABASE'])
 
 
