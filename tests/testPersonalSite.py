@@ -60,7 +60,7 @@ class testPersonalSite(unittest.TestCase):
         e = etree.HTML(rsp.data)
         assert e.find(".//div[@id='content']/h1").text == 'should be a heading 1'
 
-    def testBrowsing(self):
+    def testMultipleHits(self):
         content1 = self.db.Content()
         content1._id = u'/'
         content1.title = u'home'
@@ -71,13 +71,36 @@ class testPersonalSite(unittest.TestCase):
         content2 = self.db.Content()
         content2._id = u'thing'
         content2.title = u'thing'
-        content2.title = u'thing2'
+        content2.content = u'thing2'
         content2.show_in_navigation = True
         content2.save()
 
-        rsp = self.app.get('/')
-        assert rsp.status_code == 200
-        #to be continued..
+        response_1 = self.app.get('/')
+        assert response_1.status_code == 200
+
+        response_2 = self.app.get('thing')
+        assert response_2.status_code == 200
+
+    def testLiveUpdate(self):
+        content1 = self.db.Content()
+        content1._id = u'/'
+        content1.title = u'home'
+        content1.content = u'thing'
+        content1.show_in_navigation = True
+        content1.save()
+
+        response_1 = self.app.get('/')
+        assert response_1.status_code == 200
+
+        content2 = self.db.Content()
+        content2._id = u'thing'
+        content2.title = u'thing'
+        content2.content = u'thing2'
+        content2.show_in_navigation = True
+        content2.save()
+
+        response_2 = self.app.get('thing')
+        assert response_2.status_code == 200
 
     def tearDown(self):
         self.db.Content.delete()
