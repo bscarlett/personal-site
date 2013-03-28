@@ -1,7 +1,11 @@
 __author__ = 'bradleyscarlett'
 import unittest
-import PersonalSite
+
 from lxml import etree
+from mongoengine import connect
+
+import PersonalSite
+from PersonalSite import Content
 
 
 class testPersonalSite(unittest.TestCase):
@@ -9,14 +13,14 @@ class testPersonalSite(unittest.TestCase):
         db = 'test'
         PersonalSite.app.config['DATABASE'] = db
         self.app = PersonalSite.app.test_client()
-        self.db = PersonalSite.get_db(db)
+        connect(db)
 
     def testIndexRoute(self):
-        content = self.db.Content()
-        content._id = u'/'
-        content.title = u'Test Title'
-        content.description = u'Test Description'
-        content.content = u'Test Content'
+        content = Content()
+        content.route = '/'
+        content.title = 'Test Title'
+        content.short_description = 'Test Description'
+        content.content = 'Test Content'
         content.show_in_navigation = True
         content.save()
 
@@ -29,9 +33,9 @@ class testPersonalSite(unittest.TestCase):
         assert e.find(".//ul[@id='navigation']//a[@href='/']").text == 'Test Title'
 
     def testOtherRoute(self):
-        content = self.db.Content()
-        content._id = u'other'
-        content.content = u'other content'
+        content = Content()
+        content.route = 'other'
+        content.content = 'other content'
         content.save()
 
         rsp = self.app.get('/other')
@@ -41,17 +45,17 @@ class testPersonalSite(unittest.TestCase):
         assert e.find(".//div[@id='content']/p").text == 'other content'
 
     def test404(self):
-        content = self.db.Content()
-        self._id = u'there_is_a_route_for_this'
+        content = Content()
+        content.route = 'there_is_a_route_for_this'
         content.save()
 
         rsp = self.app.get('/there_is_no_route_for_this')
         assert rsp.status_code == 404
 
     def testContentIsMarkdown(self):
-        content = self.db.Content()
-        content._id = u'route'
-        content.content = u'#should be a heading 1#'
+        content = Content()
+        content.route = 'route'
+        content.content = '#should be a heading 1#'
         content.save()
 
         rsp = self.app.get('/route')
@@ -61,17 +65,17 @@ class testPersonalSite(unittest.TestCase):
         assert e.find(".//div[@id='content']/h1").text == 'should be a heading 1'
 
     def testMultipleHits(self):
-        content1 = self.db.Content()
-        content1._id = u'/'
-        content1.title = u'home'
-        content1.content = u'thing'
+        content1 = Content()
+        content1.route = '/'
+        content1.title = 'home'
+        content1.content = 'thing'
         content1.show_in_navigation = True
         content1.save()
 
-        content2 = self.db.Content()
-        content2._id = u'thing'
-        content2.title = u'thing'
-        content2.content = u'thing2'
+        content2 = Content()
+        content2.route = 'thing'
+        content2.title = 'thing'
+        content2.content = 'thing2'
         content2.show_in_navigation = True
         content2.save()
 
@@ -82,20 +86,20 @@ class testPersonalSite(unittest.TestCase):
         assert response_2.status_code == 200
 
     def testLiveUpdate(self):
-        content1 = self.db.Content()
-        content1._id = u'/'
-        content1.title = u'home'
-        content1.content = u'thing'
+        content1 = Content()
+        content1.route = '/'
+        content1.title = 'home'
+        content1.content = 'thing'
         content1.show_in_navigation = True
         content1.save()
 
         response_1 = self.app.get('/')
         assert response_1.status_code == 200
 
-        content2 = self.db.Content()
-        content2._id = u'thing'
-        content2.title = u'thing'
-        content2.content = u'thing2'
+        content2 = Content()
+        content2.route = 'thing'
+        content2.title = 'thing'
+        content2.content = 'thing2'
         content2.show_in_navigation = True
         content2.save()
 
@@ -103,4 +107,5 @@ class testPersonalSite(unittest.TestCase):
         assert response_2.status_code == 200
 
     def tearDown(self):
-        self.db.Content.delete()
+        for c in Content.objects:
+            c.delete()
