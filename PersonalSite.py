@@ -6,6 +6,7 @@ from mongoengine import connect
 from mongoengine import Document
 from mongoengine import StringField
 from mongoengine import BooleanField
+from mongoengine import IntField
 
 
 app = Flask(__name__)
@@ -16,15 +17,37 @@ app.config.from_object(__name__)
 
 
 class Content(Document):
-    route = StringField(required=True, unique=True, primary_key=True)
+    route = StringField(primary_key=True)
     show_in_navigation = BooleanField(default=False)
     title = StringField()
     content = StringField()
     short_description = StringField()
 
+    @staticmethod
+    def get_navigables():
+        return Content.objects(show_in_navigation=True).order_by('route')
 
-def get_navigables():
-    return Content.objects(show_in_navigation=True)
+
+class NavigationOrder(Document):
+    route = StringField(unique=True)
+    order = IntField(unique=True)
+
+    @staticmethod
+    def populate_from_content():
+        for i, c in enumerate(Content.get_navigables()):
+            NavigationOrder(route=c.route, order=i).save()
+
+    def move(self, order):
+        current_order = self.order
+        existing_target = NavigationOrder.objects(order=order).first()
+        if existing_target is not None:
+            existing_target.move(-1)  # Can't guarantee that -1 doesn't have a thing in it, so possible fail here
+            self.order = order
+            self.save()
+            existing_target.move(current_order)
+        else:
+            self.order = order
+            self.save()
 
 
 @app.before_request
@@ -41,7 +64,7 @@ def view(route):
                            title=content.title,
                            description=content.short_description,
                            body=markdown(content.content),
-                           navigables=get_navigables())
+                           navigables=Content.get_navigables())
 
 
 @app.route('/')

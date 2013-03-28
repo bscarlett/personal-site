@@ -6,6 +6,7 @@ from mongoengine import connect
 
 import PersonalSite
 from PersonalSite import Content
+from PersonalSite import NavigationOrder
 
 
 class testPersonalSite(unittest.TestCase):
@@ -106,6 +107,23 @@ class testPersonalSite(unittest.TestCase):
         response_2 = self.app.get('thing')
         assert response_2.status_code == 200
 
+    def testNavigationOrderPopulate(self):
+        Content(route='athing', show_in_navigation=True).save()
+        Content(route='bthing', show_in_navigation=True).save()
+        Content(route='notathing').save()
+        NavigationOrder.populate_from_content()
+        assert NavigationOrder.objects(order=0).first().route == 'athing'
+        assert NavigationOrder.objects(order=1).first().route == 'bthing'
+        assert NavigationOrder.objects(order=2).first() is None
+
+    def testNavigationOrderMoveOverExisting(self):
+        NavigationOrder(route='a', order=0).save()
+        n = NavigationOrder(route='b', order=1)
+        n.save()
+        n.move(0)
+        assert NavigationOrder.objects(order=0).first().route == 'b'
+        assert NavigationOrder.objects(order=1).first().route == 'a'
+
     def tearDown(self):
-        for c in Content.objects:
-            c.delete()
+        Content.objects.delete()
+        NavigationOrder.objects.delete()
