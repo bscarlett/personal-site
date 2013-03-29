@@ -2,28 +2,21 @@ from mongoengine import Document
 from mongoengine import StringField
 from mongoengine import IntField
 
-from models import Content
-
 
 class NavigationOrder(Document):
     route = StringField(unique=True)
     order = IntField(unique=True)
 
-    @classmethod
-    def populate_from_content(cls):
-        for i, c in enumerate(Content.get_navigables()):
-            cls(route=c.route, order=i).save()
-
     def move(self, order):
-        current_order = self.order
-        if current_order == order:
+        if self.order == order:
             return
         existing_target = NavigationOrder.objects(order=order).first()
         if existing_target is not None:
-            existing_target.move(-1)  # Can't guarantee that -1 doesn't have a thing in it, so possible fail here
+            existing_new = {'route': existing_target.route, 'order': self.order}
+            existing_target.delete()
             self.order = order
             self.save()
-            existing_target.move(current_order)
+            NavigationOrder(**existing_new).save()
         else:
             self.order = order
             self.save()
@@ -39,3 +32,7 @@ class NavigationOrder(Document):
         if cls.objects.count() == 0:
             return -1
         return max([o.order for o in cls.objects])
+
+    @classmethod
+    def get_routes_in_order(cls):
+        return [o.route for o in cls.objects.order_by('order')]

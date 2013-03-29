@@ -1,4 +1,6 @@
-from mongoengine import Document, StringField, BooleanField
+from mongoengine import Document
+from mongoengine import StringField
+from mongoengine import BooleanField
 
 
 class Content(Document):
@@ -8,6 +10,7 @@ class Content(Document):
     content = StringField()
     short_description = StringField()
 
-    @staticmethod
-    def get_navigables():
-        return Content.objects(show_in_navigation=True).order_by('route')
+    @classmethod
+    def get_navigables(cls):
+        return cls.objects(show_in_navigation=True).order_by('route')
+

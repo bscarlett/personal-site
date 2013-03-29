@@ -3,6 +3,7 @@ from markdown import markdown
 from mongoengine import connect
 
 from models import Content
+from models import ContentNavigationOrder
 
 bp = Blueprint('views', __name__)
 
@@ -21,7 +22,7 @@ def view(route):
                            title=content.title,
                            description=content.short_description,
                            body=markdown(content.content),
-                           navigables=Content.get_navigables())
+                           navigables=ContentNavigationOrder.get_navigables_in_order())
 
 
 @bp.route('/')

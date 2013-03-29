@@ -1,11 +1,8 @@
-from mongoengine import connect
-import configuration
 from models import Content
 from models import NavigationOrder
 
 
 def load_from_file(route, title, short_description, content_filename, show_in_navigation, **kwargs):
-    connect(configuration.DATABASE)
     content = Content()
     content.route = route
     content.title = title

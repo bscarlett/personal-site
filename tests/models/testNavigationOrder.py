@@ -4,6 +4,7 @@ from mongoengine import connect
 from nose.tools import eq_
 from models import Content
 from models import NavigationOrder
+from models import ContentNavigationOrder
 
 
 class testNavigationOrder(unittest.TestCase):
@@ -14,7 +15,7 @@ class testNavigationOrder(unittest.TestCase):
         Content(route='athing', show_in_navigation=True).save()
         Content(route='bthing', show_in_navigation=True).save()
         Content(route='notathing').save()
-        NavigationOrder.populate_from_content()
+        ContentNavigationOrder.populate_from_content()
 
         eq_(NavigationOrder.objects(order=0).first().route, 'athing')
         eq_(NavigationOrder.objects(order=1).first().route, 'bthing')

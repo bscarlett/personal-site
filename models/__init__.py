@@ -1,2 +1,3 @@
 from content import Content
 from navigation_order import NavigationOrder
+from content_navigation_order import ContentNavigationOrder

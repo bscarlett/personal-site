@@ -1,10 +1,15 @@
 from argparse import ArgumentParser
+
+from mongoengine import connect
+
 from console import load_from_file
 from console import navigation_move
 from console import serve
+import configuration
 
 
 def parse_arguments():
+    connect(configuration.DATABASE)
     argument_parser = ArgumentParser()
     subparsers = argument_parser.add_subparsers()
 

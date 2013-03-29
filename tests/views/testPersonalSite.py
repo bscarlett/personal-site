@@ -27,6 +27,7 @@ class testPersonalSite(unittest.TestCase):
         content.content = 'Test Content'
         content.show_in_navigation = True
         content.save()
+        NavigationOrder.add('/')
 
         rsp = self.app.get('/')
         eq_(rsp.status_code, 200)

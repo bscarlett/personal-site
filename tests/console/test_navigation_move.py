@@ -34,6 +34,8 @@ class test_navigation_move(unittest.TestCase):
         Content(route='a', show_in_navigation=True).save()
         navigation_move('a', 1)
 
+        eq_(NavigationOrder.objects(route='a').first().order, 1)
+
     def tearDown(self):
         Content.objects.delete()
         NavigationOrder.objects.delete()

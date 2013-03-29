@@ -2,6 +2,7 @@ from models import Content
 from models import NavigationOrder
 from console.InvalidCommand import InvalidCommand
 
+
 def navigation_move(route, order, **kwargs):
     if Content.objects(route=route).first() is None:
         raise InvalidCommand("route '{0}' does not exist in content collection".format(route))
