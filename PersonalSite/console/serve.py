@@ -1,3 +1,5 @@
 def serve(**kwargs):
     from PersonalSite import app
-    app.run()
+    host = kwargs.get('host')
+    port = kwargs.get('port')
+    app.run(host=host, port=port)

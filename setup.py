@@ -21,5 +21,8 @@ setup(
         'console_scripts': [
             'psconsole = PersonalSite:main'
         ]
+    },
+    package_data={
+        'PersonalSite': ['templates/*.html', 'static/css/*.css', 'static/js/*.js']
     }
 )

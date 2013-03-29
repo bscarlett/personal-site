@@ -14,6 +14,8 @@ def parse_arguments():
     subparsers = argument_parser.add_subparsers()
 
     serve_argument_parser = subparsers.add_parser('serve')
+    serve_argument_parser.add_argument('--host')
+    serve_argument_parser.add_argument('--port', type=int)
     serve_argument_parser.set_defaults(function=serve)
 
     load_argument_parser = subparsers.add_parser('load')
