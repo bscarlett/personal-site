@@ -3,9 +3,8 @@ import unittest
 from mongoengine import connect
 from nose.tools import eq_, raises
 
-from console import navigation_move
-from models import NavigationOrder, Content
-from console.InvalidCommand import InvalidCommand
+from PersonalSite.console import navigation_move, InvalidCommand
+from PersonalSite.models import NavigationOrder, Content
 
 
 class test_navigation_move(unittest.TestCase):

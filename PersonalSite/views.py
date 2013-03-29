@@ -2,8 +2,8 @@ from flask import abort, render_template, Blueprint, current_app
 from markdown import markdown
 from mongoengine import connect
 
-from models import Content
-from models import ContentNavigationOrder
+from PersonalSite.models import Content
+from PersonalSite.models import ContentNavigationOrder
 
 bp = Blueprint('views', __name__)
 

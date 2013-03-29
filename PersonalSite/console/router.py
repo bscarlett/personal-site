@@ -1,11 +1,11 @@
 from argparse import ArgumentParser
 
 from mongoengine import connect
+from PersonalSite import configuration
 
-from console import load_from_file
-from console import navigation_move
-from console import serve
-import configuration
+from PersonalSite.console import load_from_file
+from PersonalSite.console import navigation_move
+from PersonalSite.console import serve
 
 
 def parse_arguments():

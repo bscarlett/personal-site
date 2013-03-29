@@ -1,5 +1,5 @@
-from models.content import Content
-from models import NavigationOrder
+from PersonalSite.models.content import Content
+from PersonalSite.models import NavigationOrder
 
 __author__ = 'bradleyscarlett'
 import unittest

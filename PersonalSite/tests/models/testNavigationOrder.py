@@ -2,9 +2,9 @@ import unittest
 
 from mongoengine import connect
 from nose.tools import eq_
-from models import Content
-from models import NavigationOrder
-from models import ContentNavigationOrder
+from PersonalSite.models import Content
+from PersonalSite.models import NavigationOrder
+from PersonalSite.models import ContentNavigationOrder
 
 
 class testNavigationOrder(unittest.TestCase):

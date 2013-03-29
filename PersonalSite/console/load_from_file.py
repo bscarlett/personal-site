@@ -1,5 +1,5 @@
-from models import Content
-from models import NavigationOrder
+from PersonalSite.models import Content
+from PersonalSite.models import NavigationOrder
 
 
 def load_from_file(route, title, short_description, content_filename, show_in_navigation, **kwargs):

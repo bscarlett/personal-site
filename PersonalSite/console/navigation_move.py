@@ -1,6 +1,6 @@
-from models import Content
-from models import NavigationOrder
-from console.InvalidCommand import InvalidCommand
+from PersonalSite.models import Content
+from PersonalSite.models import NavigationOrder
+from PersonalSite.console.InvalidCommand import InvalidCommand
 
 
 def navigation_move(route, order, **kwargs):

@@ -1,6 +1,5 @@
-from console import parse_arguments
+from PersonalSite import main
 
 
 if __name__ == '__main__':
-    arguments = parse_arguments()
-    arguments.function(**vars(arguments))
+    main()

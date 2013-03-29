@@ -1,5 +1,5 @@
-from models import Content
-from models import NavigationOrder
+from PersonalSite.models import Content
+from PersonalSite.models import NavigationOrder
 
 
 class ContentNavigationOrder(object):
